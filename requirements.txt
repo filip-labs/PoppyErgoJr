@@ -1,0 +1,7 @@
+# Direct dependencies. Exact hardware-tested versions have not been recorded.
+# Prefer the versions already installed in the official Poppy image.
+pypot
+poppy-ergo-jr
+numpy
+opencv-python
+matplotlib
