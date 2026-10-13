@@ -1,0 +1,17 @@
+{
+  "source_release": "https://github.com/poppy-project/poppy-ergo-jr/releases/tag/4.0.2",
+  "version": "4.0.2",
+  "prerelease": true,
+  "compatibility": "Historical image referenced by the project presentation; verify board support upstream. Not hardware-tested by this documentation update.",
+  "archive": {
+    "filename": "2022-01-07-poppy-ergo-jr.img.7z",
+    "url": "https://github.com/poppy-project/poppy-ergo-jr/releases/download/4.0.2/2022-01-07-poppy-ergo-jr.img.7z",
+    "size_bytes": 2145160695,
+    "md5": "32c85ef6e41f130ae4a3e76552da680d"
+  },
+  "image": {
+    "filename": "2022-01-07-poppy-ergo-jr.img",
+    "md5": "93d813cfbf3651cb95636031cb11bcba"
+  },
+  "checksum_note": "MD5 values published upstream; useful for accidental corruption checks, not authenticity."
+}
