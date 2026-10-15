@@ -1,10 +1,26 @@
-# Poppy Ergo Jr · Vision-based Color Sorting
+# PoppyErgoJr
 
-A student robotics project that uses a Poppy Ergo Jr camera, OpenCV color detection, and a six-motor arm to sort red and blue objects into separate locations.
+Computer vision-powered color-sorting and pick-and-place prototype built with
+Poppy Ergo Jr and Python. OpenCV detects red and blue objects; the six-motor arm
+uses fixed pickup and release poses to sort them into separate locations.
 
-**Python · OpenCV · Raspberry Pi · Pypot**
+[![Offline checks](https://github.com/filip-labs/PoppyErgoJr/actions/workflows/ci.yml/badge.svg?branch=improvement%2Fprofessional-repository)](https://github.com/filip-labs/PoppyErgoJr/actions/workflows/ci.yml?query=branch%3Aimprovement%2Fprofessional-repository)
+[![Python 3](https://img.shields.io/badge/Python-3-3776AB?logo=python&logoColor=white)](docs/development.md)
 
-## What it does
+**[Watch the demo](https://www.filipzcvetkovic.com/videos/poppy-ergo-jr.mp4)**
+· [Setup](#getting-started) · [Architecture](#architecture)
+· [Tests](#tests-and-automation) · [Documentation](#documentation)
+· [Portfolio](https://www.filipzcvetkovic.com)
+
+## Demo
+
+[Watch the physical robot demonstration →](https://www.filipzcvetkovic.com/videos/poppy-ergo-jr.mp4)
+
+The video shows the original student project. The portfolio's interactive 3D arm
+is a separate stylized illustration. Offline CI does not validate the physical
+behavior shown in the demonstration.
+
+## How it works
 
 1. Captures a frame from the robot camera and converts RGB to HSV.
 2. Finds red and blue contours and calculates the largest contour's centroid.
@@ -23,7 +39,14 @@ compatible robot image, power supply, microSD card and local network access.
 Use the upstream bill of materials and initialization procedures; this repository
 does not supply hardware firmware or motor calibration.
 
-The runtime uses Python 3, `pypot`, `poppy-ergo-jr`, NumPy, OpenCV and matplotlib.
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Application | Python 3 | Sorting loop and motion sequencing |
+| Vision | OpenCV, NumPy | RGB-to-HSV masks and contour processing |
+| Robot access | Pypot, `poppy-ergo-jr` | Camera frames, motor goals and load readings |
+| Operator display | matplotlib | Captured-frame inspection |
+| Robot computer | Raspberry Pi | Local execution on the configured Poppy image |
+
 The exact hardware-tested versions are not recorded. A usable display backend
 is needed for the current plotting step. Offline checks use a separate environment.
 
@@ -59,30 +82,24 @@ installed robot configuration; no custom communication protocol is implemented.
 ```mermaid
 flowchart TD
     L["Opt-in launcher"] --> C["ColorSort controller"]
-    C --> V["Vision helpers: masks and centroid"]
-    V --> C
+    C <-->|"RGB frame / masks and coordinates"| V["Vision helpers"]
     C --> P["Pypot: camera and motor access"]
     P --> H["Physical Ergo Jr"]
 ```
 
-## Demo
-
-[Watch the robot demonstration](https://www.filipzcvetkovic.com/videos/poppy-ergo-jr.mp4)
-(video hosted on the portfolio). The portfolio's interactive 3D arm is a stylized
-illustration, separate from the physical demonstration.
-
-[Filip Cvetković's portfolio](https://www.filipzcvetkovic.com)
-
-## Repository guide
+## Documentation
 
 | File | Purpose |
 | --- | --- |
-| [ColorSort](ColorSort) | Original hardware controller; motion sequence retained |
+| [ColorSort](ColorSort) | Hardware controller and sorting sequence |
+| [Vision helpers](poppy_sort/vision.py) | HSV masks, centroid and horizontal motor mapping |
 | [Project presentation](Poppy%20Ergo%20Jr.pdf) | Original Serbian presentation with assembly and demonstration context |
 | [Setup guide](docs/SETUP.md) | Hardware, OS, dependencies, and first run |
 | [Calibration and troubleshooting](docs/CALIBRATION.md) | Pose assumptions, limitations, and common problems |
 | [OS image manifest](docs/os-image.json) | Official image URL and published integrity values |
 | [Environment checker](scripts/check_environment.py) | Import checks without robot initialization |
+| [Robot control](docs/robot-control.md) | Sorting cycle, execution and shutdown limitations |
+| [Development](docs/development.md) | Offline environment, tests, lint and formatting |
 | [Contributing](CONTRIBUTING.md) | How to report problems and propose improvements |
 
 ## Tests and automation
@@ -111,7 +128,7 @@ routing and launcher behavior. Passing them does not establish physical safety.
 - There is no guaranteed cleanup on interruption or failed grasp. See the calibration guide before hardware execution.
 - Offline tests cover software behavior with fake hardware; physical operation remains unverified by this update.
 
-## Planned improvements
+## Roadmap
 
 - Add recorded-camera fixtures to the existing synthetic-image tests.
 - Move calibrated poses and HSV thresholds into configuration.
