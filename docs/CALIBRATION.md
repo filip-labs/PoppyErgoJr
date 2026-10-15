@@ -2,7 +2,7 @@
 
 ## Review before running
 
-The original script is retained unchanged. Its poses belong to a particular demonstration layout and have not been validated on your hardware by the documentation update.
+The original motion sequence is retained; image helpers are extracted into `poppy_sort/vision.py`. Its poses belong to a particular demonstration layout and have not been validated on your hardware by the documentation update.
 
 | Setting | Current implementation | What to check |
 | --- | --- | --- |
