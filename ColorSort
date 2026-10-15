@@ -1,9 +1,13 @@
 # Import neophodnih biblioteka
 import time
-import numpy as np
 import matplotlib.pyplot as plt
 from pypot.creatures import PoppyErgoJr
 import cv2  # OpenCV za obradu slike
+from poppy_sort.vision import (
+    centroid as nadji_centroid,
+    color_masks,
+    image_x_to_motor as mapiraj_na_motor,
+)
 
 # Inicijalizacija robota sa "base posture"
 poppy = PoppyErgoJr()
@@ -30,20 +34,8 @@ def sortiraj_kockice():
         plt.imshow(img)
         plt.show()
         
-        # Konverzija slike iz RGB u HSV (za lakše prepoznavanje boje)
-        hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+        mask_red, mask_blue = color_masks(img)
 
-        # Definisanje opsega za detekciju boja
-        # Opseg za crvenu boju
-        lower_red = np.array([0, 120, 70])
-        upper_red = np.array([10, 255, 255])
-        mask_red = cv2.inRange(hsv_img, lower_red, upper_red)
-        
-        # Opseg za plavu boju
-        lower_blue = np.array([94, 80, 2])
-        upper_blue = np.array([126, 255, 255])
-        mask_blue = cv2.inRange(hsv_img, lower_blue, upper_blue)
-        
         # Konture za crvenu boju
         contours_red, _ = cv2.findContours(mask_red, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # Konture za plavu boju
@@ -73,27 +65,15 @@ def sortiraj_kockice():
 
         # Ponovno učitavanje slike da proverimo da li se pojavio novi čep
         img_nova = poppy.camera.frame
-        hsv_img_nova = cv2.cvtColor(img_nova, cv2.COLOR_RGB2HSV)
-        
-        mask_red_nova = cv2.inRange(hsv_img_nova, lower_red, upper_red)
-        mask_blue_nova = cv2.inRange(hsv_img_nova, lower_blue, upper_blue)
+        mask_red_nova, mask_blue_nova = color_masks(img_nova)
 
         # Proveri da li ima novog crvenog ili plavog čepa
-        if np.sum(mask_red_nova) == 0 and np.sum(mask_blue_nova) == 0:
+        if not mask_red_nova.any() and not mask_blue_nova.any():
             print("Nema novog čepa, završavam akciju.")
             break  # Prekida ciklus ako nema novih čepova
         else:
             print("Novi čep je detektovan, ponavljam akciju.")
 
-# Funkcija za pronalaženje centroida objekta
-def nadji_centroid(contour):
-    M = cv2.moments(contour)
-    if M["m00"] != 0:
-        cx = int(M["m10"] / M["m00"])
-        cy = int(M["m01"] / M["m00"])
-    else:
-        cx, cy = 0, 0
-    return cx, cy
 
 # Funkcija za spuštanje hvataljke na preciznu poziciju i hvatanje kockice sa proverom
 def spusti_ruku(cx, cy):
@@ -130,10 +110,6 @@ def proveri_hvatanje():
     print(f"Trenutno opterećenje hvataljke: {load}")
     return load > 10  # Ako je opterećenje iznad 10%, pretpostavlja se da je čep uhvaćen
 
-# Mapiranje x-osi slike na motor M1
-def mapiraj_na_motor(cx):
-    # Pretpostavka: Slika je 640 piksela široka, a motor M1 ima opseg od -30 do 30 stepeni
-    return (cx / 640.0) * 60 - 30  # Mapiraj x-poziciju slike na motorni opseg
 
 # Funkcija za pomeranje hvataljke na poziciju levo ili desno i puštanje čepa nakon rotacije
 def pomeri_hvataljku_na_poziciju(smer):

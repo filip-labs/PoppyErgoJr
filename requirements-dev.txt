@@ -1,0 +1,4 @@
+# Offline development only; do not install alongside opencv-python on the robot.
+numpy>=1.24,<3
+opencv-python-headless>=4.8,<5
+ruff==0.11.13

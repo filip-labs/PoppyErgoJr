@@ -4,7 +4,7 @@ Open an issue describing the problem or proposal before making a large change. S
 
 1. Fork the repository and create a branch.
 2. Keep changes focused and explain their effect on the sorting workflow.
-3. Run `python3 scripts/validate_repository.py` and `python3 scripts/run_color_sort.py --help` without hardware.
+3. Follow [offline development](docs/development.md): run unit tests, syntax validation, Ruff lint and format checks. Test launcher help without hardware.
 4. For motion or vision changes, record the exact environment and calibration used. Distinguish offline checks from supervised hardware testing.
 5. Include results and remaining limitations in your pull request.
 
